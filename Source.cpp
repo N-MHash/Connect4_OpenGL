@@ -1,7 +1,3 @@
-// mohamed.cpp : Defines the entry point for the console application.
-//
-
-//#include "stdafx.h"
 using namespace std;
 #include <stdlib.h>
 #include<iostream>
@@ -25,7 +21,7 @@ void myInit(void)
 {
 	glClearColor(1.0, 1.0, 1.0, 0.0); // set white background color
 	glColor3f(0.0f, 0.0f, 0.0f); // set the drawing color
-	glPointSize(4.0); // a ‘dot’ is 4 by 4 pixels
+	glPointSize(4.0); // a â€˜dotâ€™ is 4 by 4 pixels
 	gluOrtho2D(0.0, 640.0, 0.0, 480.0);
 }
 
