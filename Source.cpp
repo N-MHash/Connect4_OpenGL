@@ -1,7 +1,5 @@
-// mohamed.cpp : Defines the entry point for the console application.
-//
 
-//#include "stdafx.h"
+
 using namespace std;
 #include <stdlib.h>
 #include <iostream>
@@ -17,6 +15,7 @@ using namespace std;
 #define pi 3.14159265358979
 
 void startGFX(void);
+void drawCircle(float radius_p, float center_cx, float center_cy);
 
 struct cell_center_param {
 	float position_x;
@@ -59,13 +58,13 @@ bool p1 = 1, cpu = 0;
 string p_1;
 
 /*=============================================================*/
-void drawBoard();
+
 
 //function to take player's input
 void play();
-
+void drawBoard();
 void winnerCheck();
-
+bool checkforspace(int &r);
 //A counter that when reaches 41, declares the game as a draw.
 int draw = -1;
 /*Endof*/
@@ -81,6 +80,79 @@ void myInit(void)
 }
 
 //<<<<<<<<<<<<<<<<<<<<<<<< OpenGL myDisplay >>>>>>>>>>>>>>>>>
+void myDisplay(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
+	
+								  
+	// Draw main board
+	glBegin(GL_QUADS); 
+	glColor3f(0.168f, 0.294f, 0.9f);
+	glVertex2i(20, 63);
+	glVertex2i(540, 63);
+	glVertex2i(540, 410);
+	glVertex2i(20, 410);
+	glEnd();
+
+
+	int current_cell = -1;
+	for (int i = 1; i <= 7; i++)
+	{
+		circle_center_y = 425.7; 
+		for (int k = 1; k <= 6; k++)
+		{
+			current_cell += 1;
+
+			glBegin(GL_TRIANGLE_FAN);
+			glColor3f(1.0f, 1.0f, 1.0f);
+
+			
+			circle_center_x = 70 * i; 
+			circle_center_y -= 54;
+
+			//Set circle center vertex
+			glVertex2f(circle_center_x, circle_center_y);
+
+			//append position of the circle into vector
+			cell_center[current_cell].position_x = circle_center_x;
+			cell_center[current_cell].position_y = circle_center_y;
+			cell_center[current_cell].array_index_row = k - 1;
+			cell_center[current_cell].array_index_col = i - 1;
+
+			//Draw circle
+			drawCircle(circle_radius, circle_center_x, circle_center_y);
+			glEnd();
+			glFlush();
+		}
+	}
+	drawBoard();
+}
+/*Endof*/
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<< main >>>>>>>>>>>>>>>>>>>>>>
+void main(int argc, char** argv)
+{
+	glutInit(&argc, argv); // initialize the toolkit
+	cout << "PLAYER 1 (" << char(178) << "): Type a name!\n";
+	cin >> p_1;
+	cout << "\nHello, (" << p_1 << ")! Enjoy!";
+	startGFX();
+}
+
+void startGFX(void)
+{
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // set display mode
+	glutInitWindowSize(640, 480); // set window size
+	glutInitWindowPosition(100, 100); // set window position on screen
+	glutCreateWindow("points"); // open the screen window
+	glutDisplayFunc(myDisplay); // register redraw function
+	myInit();
+	glutMainLoop(); // go into a perpetual loop
+}
+
+
 void drawCircle(float radius_p, float center_cx, float center_cy)
 {
 	for (int j = 0; j <= 20; j++)
@@ -89,50 +161,6 @@ void drawCircle(float radius_p, float center_cx, float center_cy)
 	}
 }
 
-void myDisplay(void)
-{
-	glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
-
-	glBegin(GL_QUADS); // Draw main board
-		glColor3f(0.168f, 0.294f, 0.9f);
-		glVertex2i(20, 63);
-		glVertex2i(540, 63);
-		glVertex2i(540, 410);
-		glVertex2i(20, 410);
-	glEnd();
-
-
-	int current_cell = -1;
-	for (int i = 1; i <= 7;i++)
-	{
-		circle_center_y = 425.7;
-		for (int k = 1; k <= 6;k++)
-		{
-			current_cell += 1;
-			
-			glBegin(GL_TRIANGLE_FAN);
-				glColor3f(1.0f, 1.0f, 1.0f);
-				
-				circle_center_x = 70*i;
-				circle_center_y -= 54;
-
-				//Set circle center vertex
-				glVertex2f(circle_center_x, circle_center_y);
-			
-				cell_center[current_cell].position_x = circle_center_x;
-				cell_center[current_cell].position_y = circle_center_y;
-				cell_center[current_cell].array_index_row = k - 1;
-				cell_center[current_cell].array_index_col = i - 1;
-			
-				//Draw circle
-				drawCircle(circle_radius, circle_center_x, circle_center_y);
-			glEnd();
-			glFlush();
-		}
-	} 
-	drawBoard();
-}
-/*Endof*/
 
 int cell_index_lookup(int x, int y)
 {
@@ -144,6 +172,7 @@ int cell_index_lookup(int x, int y)
 		}
 	}
 }
+
 
 /*Game Logic*/
 void drawBoard()
@@ -215,11 +244,11 @@ void play()
 						board[r][spot - 1] = ascii; //Plays the chip in the selected column
 						cell_index = cell_index_lookup(r, spot - 1);
 						glBegin(GL_TRIANGLE_FAN);
-							glColor3f(0.92f, 0.9f, 0.05f);
+						glColor3f(0.92f, 0.9f, 0.05f);
 
-							//Set circle center vertex
-							glVertex2f(cell_center[cell_index].position_x, cell_center[cell_index].position_y);
-							drawCircle(circle_radius, cell_center[cell_index].position_x, cell_center[cell_index].position_y);
+						//Set circle center vertex
+						glVertex2f(cell_center[cell_index].position_x, cell_center[cell_index].position_y);
+						drawCircle(circle_radius, cell_center[cell_index].position_x, cell_center[cell_index].position_y);
 						glEnd();
 						glFlush();
 
@@ -249,24 +278,27 @@ void play()
 	{
 		srand(time(NULL));
 		ascii = 177;
-
+		tryagain:
 		cpu_spot = 1 + rand() % 7; //Generates a random number from 1 to 7 where the dumb AI will play
 
 		for (int r = 5; r >= 0;)
 		{
-			if (board[r][cpu_spot - 1] != ' ')
+			if (board[r][cpu_spot - 1] != ' ') {
 				r--;
+				if (r == 0 && board[r][cpu_spot - 1] != ' ')
+					goto tryagain;
+			}
 			else
 			{
 				board[r][cpu_spot - 1] = ascii;
 
 				cell_index = cell_index_lookup(r, cpu_spot - 1);
 				glBegin(GL_TRIANGLE_FAN);
-					glColor3f(1.0f, 0.0f, 0.0f);
+				glColor3f(1.0f, 0.0f, 0.0f);
 
-					//Set circle center vertex
-					glVertex2f(cell_center[cell_index].position_x, cell_center[cell_index].position_y);
-					drawCircle(circle_radius, cell_center[cell_index].position_x, cell_center[cell_index].position_y);
+				//Set circle center vertex
+				glVertex2f(cell_center[cell_index].position_x, cell_center[cell_index].position_y);
+				drawCircle(circle_radius, cell_center[cell_index].position_x, cell_center[cell_index].position_y);
 				glEnd();
 				glFlush();
 
@@ -410,29 +442,9 @@ void winnerCheck()
 	if (draw == 41)
 	{
 		cout << "\nDraw!\n";
-		Sleep(3000);
+		//Sleep(3000);
+		system("Pause");
 		exit(0);
 	}
 }
-/*Endof*/
-
-//<<<<<<<<<<<<<<<<<<<<<<<< main >>>>>>>>>>>>>>>>>>>>>>
-void main(int argc, char** argv)
-{
-	glutInit(&argc, argv); // initialize the toolkit
-	cout << "PLAYER 1 (" << char(178) << "): Type a name!\n";
-	cin >> p_1;
-	cout << "\nHello, (" << p_1 << ")! Enjoy!";
-	startGFX();
-}
-
-void startGFX(void)
-{
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // set display mode
-	glutInitWindowSize(640, 480); // set window size
-	glutInitWindowPosition(100, 100); // set window position on screen
-	glutCreateWindow("points"); // open the screen window
-	glutDisplayFunc(myDisplay); // register redraw function
-	myInit();
-	glutMainLoop(); // go into a perpetual loop
-}
+/*EndofGa5meLogic*/
