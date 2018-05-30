@@ -64,7 +64,6 @@ string p_1;
 void play();
 void drawBoard();
 void winnerCheck();
-bool checkforspace(int &r);
 //A counter that when reaches 41, declares the game as a draw.
 int draw = -1;
 /*Endof*/
@@ -442,8 +441,7 @@ void winnerCheck()
 	if (draw == 41)
 	{
 		cout << "\nDraw!\n";
-		//Sleep(3000);
-		system("Pause");
+		Sleep(3000);
 		exit(0);
 	}
 }
