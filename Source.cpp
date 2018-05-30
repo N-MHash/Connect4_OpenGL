@@ -445,4 +445,4 @@ void winnerCheck()
 		exit(0);
 	}
 }
-/*EndofGa5meLogic*/
+/*End_of_Ga5me_Logic*/
